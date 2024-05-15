@@ -1,0 +1,74 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = 'venkatesh-nginx-image:tag'
+        KUBE_NAMESPACE = 'nginx_app_namespace'
+        KUBECONFIG_CREDENTIALS_ID = 'kubeconfig-creds'
+        KUBE_SERVER_URL = 'https://kube-cluster.example.com'
+    }
+
+    stages {
+        stage('Login to DockerHub') {
+            steps {
+                script {
+                    // Login to DockerHub if necessary
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build the Docker image
+                    sh "docker build -t ${env.DOCKER_IMAGE} ."
+                }
+            }
+        }
+
+        stage('Login to Kubernetes Cluster') {
+            steps {
+                script {
+                    // Use configured Kubernetes credentials
+                    withKubeConfig(credentialsId: 'kubeconfig-creds', serverUrl: 'https://kube-cluster.example.com', namespace: env.KUBE_NAMESPACE) {
+                        sh 'kubectl get pods'
+                    }
+                }
+            }
+        }
+
+        stage('Deploy StatefulSet to Kubernetes') {
+            steps {
+                script {
+                    // Use configured Kubernetes credentials
+                    withKubeConfig(credentialsId: 'kubeconfig-creds', serverUrl: 'https://kube-cluster.example.com', namespace: env.KUBE_NAMESPACE) {
+                        sh "kubectl apply -f k8s-nginx-statefulset.yaml -n ${env.KUBE_NAMESPACE}"
+                    }
+                }
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                script {
+                    // Use configured Kubernetes credentials
+                    withKubeConfig(credentialsId: 'kubeconfig-creds', serverUrl: 'https://kube-cluster.example.com', namespace: env.KUBE_NAMESPACE) {
+                        sh "kubectl get pods -n ${env.KUBE_NAMESPACE}"
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline executed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed! Please check logs for details.'
+        }
+        always {
+            // Clean up any resources if needed
+        }
+    }
+}
