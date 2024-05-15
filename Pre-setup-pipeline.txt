@@ -1,0 +1,16 @@
+###To set up a streamlined build and deployment pipeline for the nginx application using Jenkins, follow these steps:
+
+#1. Install Jenkins: Install Jenkins on local machine or cloud based like ec2 instance then login Jenkins server with pre-setup credentials.
+
+#2. Install Necessary Plugins: Install plugins required for Docker, Kubernetes, and any other necessary integrations. The needful        plugins are Pipeline, Docker Pipeline Plugin, Kubernetes Continuous Deploy Plugin, Kubernetes CLI Plugin, Credentials Plugin, Pipeline Utility steps Plugin etc.
+
+#3. Set up Jenkins Credentials: Add credentials for Docker Hub and Kubernetes cluster in Jenkins credentials store.
+
+#4. Create Jenkins Pipeline Job:
+
+                          Create a new pipeline job in Jenkins.
+                          Configure the pipeline to use a Jenkins file from your repository.
+#Write Jenkins file:
+
+                            Create a Jenkins file in the root of your project repository.
+                            Define stages for building Docker image, running security checks, and deploying to Kubernetes.###To set up a 
