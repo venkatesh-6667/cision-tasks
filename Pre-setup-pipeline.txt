@@ -19,20 +19,18 @@ Blue Ocean Plugin (optional, for a better UI)
 Ensure Jenkins can run Docker commands (Docker must be installed and Jenkins user added to the Docker group).
 
 3.Kubernetes Setup:
-Ensure you have access to a Kubernetes cluster.
-kubectl should be installed and configured.
+  Ensure you have access to a Kubernetes cluster.
+  kubectl should be installed and configured.
 
 4.SonarQube Setup:
-A running SonarQube server.
-A SonarQube project for code analysis.
-A SonarQube authentication token with appropriate permissions.
-Jenkins Credentials:
+A running SonarQube server,SonarQube project for code analysis.SonarQube authentication token with appropriate permissions.
 
-5.Docker Hub Credentials:
-Create a "Username with password" credential in Jenkins for Docker Hub with the ID dockerhub-credentials-id.
+5.Jenkins Credentials:
+  a.Docker Hub Credentials:
+     Create a "Username with password" credential in Jenkins for Docker Hub with the ID dockerhub-credentials-id.
 
-6.Kubernetes Kubeconfig:
-Add a "Secret file" credential in Jenkins for the kubeconfig file with the ID kubeconfig-id.
+   b.Kubernetes Kubeconfig:
+     Add a "Secret file" credential in Jenkins for the kubeconfig file with the ID kubeconfig-id.
 
-7.SonarQube Token:
-Add a "Secret text" credential in Jenkins for the SonarQube token with the ID sonarqube-token-id.
+   c.SonarQube Token:
+     Add a "Secret text" credential in Jenkins for the SonarQube token with the ID sonarqube-token-id.
