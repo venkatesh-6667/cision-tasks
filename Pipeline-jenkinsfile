@@ -2,17 +2,42 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'venkatesh-nginx-image:tag'
-        KUBE_NAMESPACE = 'nginx_app_namespace'
-        KUBECONFIG_CREDENTIALS_ID = 'kubeconfig-creds'
-        KUBE_SERVER_URL = 'https://kube-cluster.example.com'
+        DOCKER_IMAGE = "cision/nginx:latest"
+        DOCKERHUB_CREDENTIALS = 'dockerhub-credentials-id'
+        KUBECONFIG_CREDENTIAL_ID = 'kubeconfig-id'
+        SONARQUBE_SERVER = 'sonarqube-server-id'
+        SONARQUBE_TOKEN = credentials('sonarqube-token-id') // Ensure secure storage and minimal permissions
+        KUBE_NAMESPACE = 'default' // Ensure this is set correctly for production
+    }
+
+    options {
+        timeout(time: 30, unit: 'MINUTES')
+        retry(3)
     }
 
     stages {
-        stage('Login to DockerHub') {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/venkatesh-6667/cision-tasks.git'
+            }
+        }
+
+        stage('Code Analysis') {
             steps {
                 script {
-                    // Login to DockerHub if necessary
+                    withSonarQubeEnv(SONARQUBE_SERVER) {
+                        sh 'sonar-scanner -Dsonar.projectKey=nginx-app -Dsonar.sources=. -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONARQUBE_TOKEN'
+                    }
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                script {
+                    timeout(time: 5, unit: 'MINUTES') {
+                        waitForQualityGate abortPipeline: true
+                    }
                 }
             }
         }
@@ -20,40 +45,53 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build the Docker image
-                    sh "docker build -t ${env.DOCKER_IMAGE} ."
+                    docker.build(DOCKER_IMAGE)
                 }
             }
         }
 
-        stage('Login to Kubernetes Cluster') {
-            steps {
-                script {
-                    // Use configured Kubernetes credentials
-                    withKubeConfig(credentialsId: 'kubeconfig-creds', serverUrl: 'https://kube-cluster.example.com', namespace: env.KUBE_NAMESPACE) {
-                        sh 'kubectl get pods'
+        stage('Run Security Checks') {
+            parallel {
+                stage('Trivy Scan') {
+                    steps {
+                        script {
+                            sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/app aquasec/trivy image ${DOCKER_IMAGE}'
+                        }
+                    }
+                }
+                stage('Snyk Scan') {
+                    steps {
+                        script {
+                            sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock snyk/snyk-cli:docker snyk test --docker ${DOCKER_IMAGE}'
+                        }
                     }
                 }
             }
         }
 
-        stage('Deploy StatefulSet to Kubernetes') {
+        stage('Push Docker Image') {
             steps {
                 script {
-                    // Use configured Kubernetes credentials
-                    withKubeConfig(credentialsId: 'kubeconfig-creds', serverUrl: 'https://kube-cluster.example.com', namespace: env.KUBE_NAMESPACE) {
-                        sh "kubectl apply -f k8s-nginx-statefulset.yaml -n ${env.KUBE_NAMESPACE}"
+                    docker.withRegistry('https://registry.hub.docker.com/', DOCKERHUB_CREDENTIALS) {
+                        docker.image(DOCKER_IMAGE).push()
                     }
                 }
             }
         }
 
-        stage('Verify Deployment') {
+        stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    // Use configured Kubernetes credentials
-                    withKubeConfig(credentialsId: 'kubeconfig-creds', serverUrl: 'https://kube-cluster.example.com', namespace: env.KUBE_NAMESPACE) {
-                        sh "kubectl get pods -n ${env.KUBE_NAMESPACE}"
+                    try {
+                        kubernetesDeploy(
+                            configs: 'k8s/deployment.yaml',
+                            kubeconfigId: KUBECONFIG_CREDENTIAL_ID,
+                            enableConfigSubstitution: true
+                        )
+                    } catch (Exception e) {
+                        echo "Deployment failed: ${e.message}"
+                        // Optional: Add a rollback step here if needed
+                        throw e
                     }
                 }
             }
@@ -62,13 +100,17 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline executed successfully!'
+            echo 'Deployment succeeded!'
+            // Notify team of successful deployment
+            // slackSend(channel: '#deployments', message: 'Deployment succeeded!')
         }
         failure {
-            echo 'Pipeline failed! Please check logs for details.'
+            echo 'Deployment failed!'
+            // Notify team of failure
+            // slackSend(channel: '#deployments', message: 'Deployment failed!')
         }
         always {
-            // Clean up any resources if needed
+            cleanWs()
         }
     }
 }
