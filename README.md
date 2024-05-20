@@ -104,7 +104,7 @@ To add Slack or email notifications:
 - Add notification steps in the post section of the Jenkinsfile:
 
 ## Troubleshooting
-Pipeline Errors: Check the Jenkins console output for detailed error messages.
-Docker Issues: Ensure Docker is running and the Jenkins user has access to Docker.
-Kubernetes Issues: Verify the kubeconfig is correct and Jenkins can access the Kubernetes cluster.
-SonarQube Issues: Ensure the SonarQube server and token are configured correctly.
+- Pipeline Errors: Check the Jenkins console output for detailed error messages.
+- Docker Issues: Ensure Docker is running and the Jenkins user has access to Docker.
+- Kubernetes Issues: Verify the kubeconfig is correct and Jenkins can access the Kubernetes cluster.
+- SonarQube Issues: Ensure the SonarQube server and token are configured correctly.
