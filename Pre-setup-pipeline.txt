@@ -1,16 +1,38 @@
 ###To set up a streamlined build and deployment pipeline for the nginx application using Jenkins, follow these steps:
 
-#1. Install Jenkins: Install Jenkins on local machine or cloud based like ec2 instance then login Jenkins server with pre-setup credentials.
+Pre-requisites:
 
-#2. Install Necessary Plugins: Install plugins required for Docker, Kubernetes, and any other necessary integrations. The needful        plugins are Pipeline, Docker Pipeline Plugin, Kubernetes Continuous Deploy Plugin, Kubernetes CLI Plugin, Credentials Plugin, Pipeline Utility steps Plugin etc.
+1.Jenkins Setup:
+Jenkins is installed and running.
 
-#3. Set up Jenkins Credentials: Add credentials for Docker Hub and Kubernetes cluster in Jenkins credentials store.
+#Install Necessary Jenkins Plugins:
+Docker Pipeline Plugin
+Kubernetes Continuous Deploy Plugin
+SonarQube Scanner Plugin
+Kubernetes CLI plugin
+Credentilas Plugin
+Pipeline Utility Steps Plugin
+Blue Ocean Plugin (optional, for a better UI)
 
-#4. Create Jenkins Pipeline Job:
 
-                          Create a new pipeline job in Jenkins.
-                          Configure the pipeline to use a Jenkins file from your repository.
-#Write Jenkins file:
+2.Docker Setup:
+Ensure Jenkins can run Docker commands (Docker must be installed and Jenkins user added to the Docker group).
 
-                            Create a Jenkins file in the root of your project repository.
-                            Define stages for building Docker image, running security checks, and deploying to Kubernetes.###To set up a 
+3.Kubernetes Setup:
+Ensure you have access to a Kubernetes cluster.
+kubectl should be installed and configured.
+
+4.SonarQube Setup:
+A running SonarQube server.
+A SonarQube project for code analysis.
+A SonarQube authentication token with appropriate permissions.
+Jenkins Credentials:
+
+5.Docker Hub Credentials:
+Create a "Username with password" credential in Jenkins for Docker Hub with the ID dockerhub-credentials-id.
+
+6.Kubernetes Kubeconfig:
+Add a "Secret file" credential in Jenkins for the kubeconfig file with the ID kubeconfig-id.
+
+7.SonarQube Token:
+Add a "Secret text" credential in Jenkins for the SonarQube token with the ID sonarqube-token-id.
