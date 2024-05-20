@@ -1,0 +1,10 @@
+E98765:Engineering:Rahul:50000
+E54321:Engineering:Aditya:55000
+E12345:HR:Vinay:45000
+E24680:Engineering:Suresh:60000
+E13579:Engineering:Mohan:52000
+E9876:Sales:Riya:48000
+E5432:Finance:Aarav:60000
+E1234:Marketing:Kavya:51000
+E2468:Operations:Rohit:55000
+E1357:IT:Sunita:52000
