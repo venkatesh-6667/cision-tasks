@@ -35,7 +35,7 @@ This repository contains a Jenkins pipeline configuration for an Nginx applicati
    - SonarQube: For static code analysis.
 
 5. Credentials Configuration in Jenkins:
-   - Docker Hub Credentials: A "Username with password" credential with ID 'dockerhub-credentials-id'.
+   - Docker Hub Credentials: A "Username with password" credential with ID `dockerhub-credentials-id`.
    - Kubernetes Kubeconfig: A "Secret file" credential with ID `kubeconfig-id`.
    - SonarQube Token: A "Secret text" credential with ID `sonarqube-token-id`.
 
@@ -56,7 +56,7 @@ The Jenkins pipeline consists of the following stages:
 Global Tool Configuration
 1. Go to Manage Jenkins >> Global Tool Configuration.
 2. Add a SonarQube Scanner installation.
-3. Add your SonarQube server details in the SonarQube servers section with ID 'sonarqube-server-id'.
+3. Add your SonarQube server details in the SonarQube servers section with ID `sonarqube-server-id`.
 
 Creating the Pipeline Job
 1. Create a new Pipeline job in Jenkins.
@@ -90,7 +90,7 @@ Click Save.
   The'Jenkinsfile'is the script that defines the pipeline and should be placed in the root of your repository.
 
 ## k8s deployment configuration
-Ensure you have a k8s/deployment.yaml file in your repository
+Ensure you have a `k8s/deployment.yaml` file in your repository
 
 ## Running the Jenkins file
 1.Trigger the Job:
